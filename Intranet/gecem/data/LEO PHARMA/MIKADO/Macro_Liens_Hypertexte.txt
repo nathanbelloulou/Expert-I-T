@@ -1,0 +1,5 @@
+Développeur ==> Macro
+
+Nom de la macro : Liens_Hypertexte
+
+Terminer en pointant sur C6

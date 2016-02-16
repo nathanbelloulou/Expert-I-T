@@ -1,8 +1,0 @@
-order allow,deny
-allow from all
-<FilesMatch ".(xls|xlsx|xlsm|pdf|doc|docx)$">
-deny from all
-</FilesMatch>
-<FilesMatch "config.php">
-deny from all
-</FilesMatch>

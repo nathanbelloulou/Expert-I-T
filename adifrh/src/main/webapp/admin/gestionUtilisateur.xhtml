@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="../template/common/commonLayout.xhtml">
+		<ui:define name="content">
+		<p:panel header="Gestion utilisateur" >
+			
+			<h:form id="tab">
+		<p:panel id="ajouter" style="margin:10px"  rendered="#{utilisateurBean.utilisateur ne null}" >
+		
+				<h:panelGrid id="add" columns="4"  width="100%">
+				
+					<h:outputLabel for="name" value="Nom : "  ></h:outputLabel>
+					<p:inputText id="name" value="#{utilisateurBean.utilisateur.nom}"></p:inputText>
+				
+					<h:outputLabel for="surname" value="Prénom : " />
+					<p:inputText id="surname" value="#{utilisateurBean.utilisateur.prenom}"/>
+						
+				
+					<h:outputLabel for="email" value="Email : " />
+					<p:inputText id="email" value="#{utilisateurBean.utilisateur.email}"  >
+					</p:inputText>
+					
+					
+					<h:outputLabel for="email" value="Administrateur: " />
+					<h:selectBooleanCheckbox label="Abilitation"  value="#{utilisateurBean.utilisateur.abilitationAdministrateur}"></h:selectBooleanCheckbox>
+					<h:outputLabel value="Client: " />
+					<h:selectOneMenu value="#{utilisateurBean.idClient}"    >  
+            <f:selectItems value="#{clientBean.clientList}" var="client" itemLabel="#{client.nom}"   itemValue="#{client.id}"/> 
+         
+        </h:selectOneMenu>
+					
+			
+				
+			
+			
+			
+			
+					
+					<p:commandButton id="updateUser" value="Modifier" icon="ui-icon ui-icon-check"
+						actionListener="#{utilisateurBean.updateUtilisateur}" rendered="#{utilisateurBean.utilisateur.id ne 0 }" update="@form" />
+						<p:commandButton id="addUser" icon="ui-icon ui-icon-check" rendered="#{utilisateurBean.utilisateur.id eq 0}" value="Ajouter" 
+						actionListener="#{utilisateurBean.addUtilisateur()}" process="tab:ajouter" update="@form" />
+						
+						<p:commandButton update="@form" partialSubmit="true" process="@this"  actionListener="#{utilisateurBean.init()}"
+						icon="ui-icon ui-icon-close" value="Annuler" id="showDialogButton" 
+						 ></p:commandButton>
+						
+					
+		</h:panelGrid>
+			</p:panel>
+		
+				<p:dataTable id="utilisateurs" var="user" paginatorPosition="bottom"
+					value="#{utilisateurBean.utilisateurList}" draggableColumns="true"
+					selectionMode="single" selection="#{utilisateurBean.utilisateur}" rowKey="#{user.id}"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:ajax event="rowSelect" listener="#{utilisateurBean.onRowSelect}" update="@form" />
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Identifiant" />
+						</f:facet>
+						<h:outputText value="#{user.id}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nom" />
+						</f:facet>
+						<h:outputText value="#{user.nom}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Prenom" />
+						</f:facet>
+						<h:outputText value="#{user.prenom}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Email" />
+						</f:facet>
+						<h:outputText value="#{user.email}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Administrateur" />
+						</f:facet>
+						<h:outputText value="#{user.abilitationAdministrateur eq true ? 'oui':'non'}" />
+					</p:column>
+	<p:column>
+						<f:facet name="header">
+							<h:outputText value="Client" />
+						</f:facet>
+						<h:outputText value="#{user.client.nom}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header"><p:commandButton update="@form" partialSubmit="true" process="@this"  actionListener="#{utilisateurBean.ajouterUtilisateur()}"
+						icon="ui-icon ui-icon-plusthick" id="showDialogButton" 
+						 ></p:commandButton>
+							
+						</f:facet>
+<p:commandButton update="@form"  actionListener="#{utilisateurBean.initMdpUtilisateur(user)}"
+						icon="ui-icon ui-icon-refresh" value="Initialiser le mot de passe" id="init" 
+						 	 ></p:commandButton>
+  
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+</p:panel>
+
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+
+	<ui:composition template="template/common/commonLayout.xhtml">
+		<ui:define name="content">
+
+			<h:form>
+
+				<p:dialog header="Modifier le message" widgetVar="dlgMessage"
+					modal="true" showEffect="fade" hideEffect="fade">
+					<p:editor value="#{initBean.messageAccueil}" />
+					<p:commandButton id="save" value="Enregistrer"
+						oncomplete="PF('dlgMessage').hide()"
+						actionListener="#{initBean.saveMessageAccueil()}" update="@form"
+						icon="ui-icon-disk" iconPos="right" />
+				</p:dialog>
+				<p:panel id="info" header="Message d'information" widgetVar="panel">
+
+					<h:outputText id="display" value="#{initBean.messageAccueil}"
+						escape="false" />
+					<f:facet name="actions">
+						<p:commandButton value="Modifier" icon="ui-icon-newwin"
+							iconPos="right"
+							styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+							rendered="#{authBean.utilisateur.abilitationAdministrateur}"
+							onclick="PF('dlgMessage').show()"></p:commandButton>
+
+					</f:facet>
+
+
+
+				</p:panel>
+				<p:panel header="Notification"
+					collapsed="#{accueilBean.notifications.size() eq 0}">
+					<f:facet name="actions">
+						<p:commandButton value="#{accueilBean.notifications.size()}"
+							styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+							style="#{accueilBean.notifications.size() ne 0 ?'background:#0088cc':''}"></p:commandButton>
+
+					</f:facet>
+					<p:dataList value="#{accueilBean.notifications}" var="notification"
+						itemType="none" emptyMessage="Aucune notification.">
+
+						<h:outputText value=""></h:outputText>
+				#{notification.message.libelle}  #{notification.date}
+				
+				</p:dataList>
+
+
+				</p:panel>
+			</h:form>
+
+
+
+			<p:panel widgetVar="cra"
+				style="height: 80px;margin:2px;"
+				header="Action">
+
+				<h:form id="frm">
+				
+					<h:panelGrid columns="1" style="float:left;">
+				
+<h:outputText style="margin-top:4px" value="Vous pouvez réaliser les actions suivantes:"></h:outputText>
+</h:panelGrid>
+
+
+					<h:panelGrid columns="4" 
+						rendered="#{!authBean.utilisateur.abilitationAdministrateur}">
+
+						<p:commandButton style="width:200px;" id="saisirCra"
+							value="Saisir mon cra" action="crasaisie"></p:commandButton>
+						<p:commandButton style="width:200px;" value="Demande de congés"
+							action="conges"
+							actionListener="#{accueilBean.setMenuActif('conges')}"></p:commandButton>
+							<p:commandButton style="width:200px;" id="abscence"
+							value="Déclarer une abscence" action="crasaisie"></p:commandButton>
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" style="float:right;"
+						rendered="#{authBean.utilisateur.abilitationAdministrateur}">
+						<p:commandButton style="width:200px;" value="Gestion de CRA"
+							action="gestionCra"></p:commandButton>
+						<p:commandButton style="width:200px;" value="Gestion des congès"
+							action="conges"></p:commandButton>
+						<p:commandButton style="width:200px;"
+							value="Notifier les utilisateurs" action="notification"></p:commandButton>
+
+					</h:panelGrid>
+
+				</h:form>
+
+
+			</p:panel>
+			
+
+			<p:panel header="Base documentaire" menuTitle="Base documentaire"
+				widgetVar="doc" id="doc" style="margin:2px;">
+
+
+
+
+
+
+
+				<h:form id="listDoc">
+					<p:dataTable var="f" value="#{accueilBean.files}" paginator="true"
+						rows="5" paginatorPosition="bottom">
+						<p:column headerText="Fichier" width="100"
+							filterBy="#{f.getName()}" sortBy="#{f.getName()}">
+							<h:outputText value="#{f.getName()}"></h:outputText>
+
+
+						</p:column>
+						<p:column headerText="Taille" width="100">
+							<h:outputText
+								value="#{authBean.converterTailleFichier(f.length())}" />
+
+
+						</p:column>
+
+						<p:column headerText="Action" width="40">
+
+							<p:commandButton style="width:100%" value="Télécharger"
+								ajax="false" icon="ui-icon-arrowthick-1-s">
+								<p:fileDownload value="#{accueilBean.downLoad(f.getName())}"></p:fileDownload>
+							</p:commandButton>
+
+						</p:column>
+					</p:dataTable>
+				</h:form>
+				<h:form enctype="multipart/form-data"
+					rendered="#{authBean.utilisateur.abilitationAdministrateur}">
+
+					<p:panel header="Ajouter un document">
+						<p:fileUpload fileUploadListener="#{accueilBean.upload}"
+							uploadLabel="Transmettre" cancelLabel="Annuler" label="Choisir"
+							mode="advanced" dragDropSupport="true" update=":listDoc">
+						</p:fileUpload>
+					</p:panel>
+
+				</h:form>
+
+			</p:panel>
+
+
+
+
+
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

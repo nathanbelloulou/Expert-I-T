@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="../template/common/commonLayout.xhtml">
+		<ui:define name="content">
+		<p:panel header="Gestion client">
+			<h:form id="tab">
+	<p:panel  style="margin:10px" >
+				<h:panelGrid id="add" columns="4" >	
+				
+					<h:outputLabel for="name" value="Nom : " />
+					<p:inputText id="name" value="#{clientBean.client.nom}"/>
+				
+					
+		
+					
+					
+				
+				
+					<p:commandButton id="addUser" value="#{clientBean.client.id eq null ? 'Ajouter': 'Modifier'}" 
+						actionListener="#{clientBean.addClient}" update=":tab:aClients" />
+			
+				</h:panelGrid>
+			</p:panel>
+				<p:dataTable id="aClients" var="aClient" paginatorPosition="bottom"
+					value="#{clientBean.clientList}" draggableColumns="true"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nom" />
+						</f:facet>
+						<h:outputText value="#{aClient.nom}" />
+					</p:column>
+					<p:column style="width:10%">
+						<f:facet name="header"><p:commandButton update=":tab:add"  actionListener="#{clientBean.reset}"
+						icon="ui-icon ui-icon-plusthick" id="showDialogButton" 
+						 />
+							
+						</f:facet>
+							
+<p:commandButton id="selectButton" update=":tab:add"  actionListener="#{clientBean.setClient(aClient)}"  icon="ui-icon-search" title="View"> 
+  </p:commandButton><p:commandButton id="selectButt" update=":tab:aClients"  actionListener="#{clientBean.deleteClient(aClient)}" icon="ui-icon ui-icon-circle-close" title="View"> 
+  
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+</p:panel>
+
+
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

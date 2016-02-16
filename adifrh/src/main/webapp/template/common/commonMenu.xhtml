@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<body>
+	<ui:composition>
+		
+			<f:event listener="#{authBean.isIdentifier}" type="preRenderView" />
+			<p:dialog id="utilisateurMaj" header="Mon compte" widgetVar="dlgCompte" showEffect="fade"  modal="true"
+				hideEffect="fade">
+				
+				<h:form id="xs">
+			
+				<h:panelGrid columns="2">
+
+					<h:outputLabel for="name" value="Nom : " />
+					<p:inputText disabled="true" id="name"
+						value="#{authBean.utilisateur.nom}" />
+
+					<h:outputLabel for="surname" value="Prénom : " />
+					<p:inputText disabled="true" id="surname"
+						value="#{authBean.utilisateur.prenom}" />
+
+
+					<h:outputLabel for="email" value="Email : " />
+					<p:inputText id="email" value="#{authBean.utilisateur.email}">
+
+					</p:inputText>
+
+					<h:outputLabel for="email" value="Administrateur: " />
+					<h:selectBooleanCheckbox disabled="true" label="Abilitation"
+						value="#{authBean.utilisateur.abilitationAdministrateur}"></h:selectBooleanCheckbox>
+
+					<h:outputText value="Client : " />
+					<h:outputText value="#{authBean.utilisateur.client.nom}" />
+					
+
+				</h:panelGrid>
+				
+		
+				<h:panelGrid  columns="2"  >
+				
+					<h:outputLabel for="mdp" value="Nouveau mot de passe : " />
+						<p:password id="mdp" value="#{authBean.newpass}"/>
+					
+				
+						<h:outputLabel for="mdp1" value="Ressaisir le mot de passe : " />
+						<p:password id="mdp1" value="#{authBean.newpass2}"/>
+			
+					</h:panelGrid>
+			
+				<p:commandButton value="Enregistrer" actionListener="#{authBean.enregistrerModification()}" update="@form:@parent" icon="ui-icon-newwin"></p:commandButton>
+				</h:form>
+			</p:dialog>
+	
+		<h:form>
+		
+			<p:menubar id="menubar">
+
+				<p:menuitem value="Accueil" action="accueil" id="acceuil" styleClass="#{navigationBean.menuActif eq'accueil'? 'select-on-menu':''}"
+					actionListener="#{navigationBean.setMenuActif('accueil')}"
+				 />
+
+				<p:separator
+					styleClass="separator"
+					rendered="#{!authBean.utilisateur.abilitationAdministrateur}"></p:separator>
+
+				<p:menuitem id="craid" value="Compte Rendu d'Activité"  styleClass="#{navigationBean.menuActif eq'cra'? 'select-on-menu':''}"
+					rendered="#{!authBean.utilisateur.abilitationAdministrateur}"
+					action="crasaisie" onclick="#{craBean.init()}"
+					actionListener="#{navigationBean.setMenuActif('cra')}"
+					></p:menuitem>
+
+				<p:separator styleClass="separator"></p:separator>
+
+				<p:menuitem value="Congés" id="congesid" styleClass="#{navigationBean.menuActif eq'conges'? 'select-on-menu':''}"
+					rendered="#{!authBean.utilisateur.abilitationAdministrateur}"  
+					action="conges"
+					actionListener="#{navigationBean.setMenuActif('conges')}"
+					 />
+
+
+
+				
+				<p:menuitem rendered="#{authBean.utilisateur.abilitationAdministrateur}" styleClass="#{navigationBean.menuActif eq'notification'? 'select-on-menu':''}" value="Notification" action="notification" id="notification"
+					actionListener="#{navigationBean.setMenuActif('notification')}"
+					/>
+					<p:separator styleClass="separator" rendered="#{authBean.utilisateur.abilitationAdministrateur}"></p:separator>
+					<p:menuitem rendered="#{authBean.utilisateur.abilitationAdministrateur}" styleClass="#{navigationBean.menuActif eq'gestionCra'? 'select-on-menu':''}" value="Gestion des CRA" action="gestionCra"
+					actionListener="#{navigationBean.setMenuActif('gestionCra')}"
+					/>
+					<p:separator styleClass="separator" rendered="#{authBean.utilisateur.abilitationAdministrateur}"></p:separator>
+					<p:menuitem rendered="#{authBean.utilisateur.abilitationAdministrateur}" styleClass="#{navigationBean.menuActif eq'conges'? 'select-on-menu':''}" value="Gestion des Congés" action="gestionConges" 
+					actionListener="#{navigationBean.setMenuActif('conges')}"
+					/>
+					<p:separator styleClass="separator" rendered="#{authBean.utilisateur.abilitationAdministrateur}"></p:separator>
+<p:submenu label="Administration"
+					rendered="#{authBean.utilisateur.abilitationAdministrateur}" styleClass="#{navigationBean.menuActif eq'administration'? 'select-on-menu':''}">
+					<p:menuitem value="Utilisateur" action="gestionUtilisateur" onclick="#{utilisateurBean.init()}" actionListener="#{navigationBean.setMenuActif('administration')}" />
+					<p:menuitem value="Calendrier" action="gestionJourOff"  actionListener="#{navigationBean.setMenuActif('administration')}"/>
+					<p:menuitem value="Client" action="gestionClient"  actionListener="#{navigationBean.setMenuActif('administration')}"/>
+					<p:menuitem value="Option" action="option"  actionListener="#{navigationBean.setMenuActif('administration')}"/>
+				</p:submenu>
+				<f:facet name="options">
+					<p:commandButton  iconPos="right" value="#{authBean.utilisateur.prenom} #{authBean.utilisateur.nom}"
+						icon="ui-icon-person" actionListener="#{authBean.init()}" update="@widgetVar(dlgCompte)"  process="@this"  oncomplete="PF('dlgCompte').show();" />
+					<p:commandButton style="margin-left:5px" icon="ui-icon-unlocked"
+						iconPos="right" action="#{authBean.doLogout}"
+						rendered="#{authBean.utilisateur!=null}"></p:commandButton>
+
+				</f:facet>
+
+			</p:menubar>
+
+
+		</h:form>
+	</ui:composition>
+</body>
+</html>
+
+

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../template/common/commonLayout.xhtml">
+		<ui:define name="content">
+		<p:panel header="Gestion du Calendrier">
+		<h:form id="jourOff">
+		
+			<p:panel style="margin:10px" >
+		
+			<h:panelGrid id="add" columns="6" >
+				
+				
+				<h:outputLabel for="nom" value="Nom : " />
+					<p:inputText id="nom" value="#{jourOffBean.jourOff.libelle}"/>
+				
+					<h:outputLabel for="date" value="Date : " />
+					<p:calendar id="date" value="#{jourOffBean.jourOff.date}"/>
+				
+					
+					
+
+				
+				
+					<div>
+					<p:commandButton id="addJourOff" value="Ajouter" 
+					rendered="#{jourOffBean.jourOff.id eq 0}" process="@this:@parent" update="@form"
+						action="#{jourOffBean.addJourOff}"  />
+						<p:commandButton rendered="#{jourOffBean.jourOff.id ne 0}"  id="updateJourOff" value="Modifier" 
+						action="#{jourOffBean.updateJourOff}" update=":jourOff:data" />
+				
+
+					</div>
+				</h:panelGrid>
+	
+		</p:panel>
+			
+				<p:dataTable id="data" var="jourOff" paginatorPosition="bottom"
+					value="#{jourOffBean.jourOffList}" draggableColumns="true"
+					selectionMode="single" selection="#{jourOffBean.jourOff}" rowKey="#{jourOff.id}"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:ajax event="rowSelect" listener="#{jourOffBean.onRowSelect}" update="@form" />
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nom " />
+						</f:facet>
+						<h:outputText value="#{jourOff.libelle}" ></h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Date" />
+						</f:facet>
+						<h:outputText value="#{jourOff.date}" ><f:convertDateTime pattern="d/M/yyyy" /></h:outputText>
+					</p:column>
+					
+				
+
+					<p:column style="width:10%">
+						<f:facet name="header"><p:commandButton update=":jourOff:add"  actionListener="#{jourOffBean.reset}"
+						icon="ui-icon-plusthick" id="showDialogButton" 
+						 />
+							
+						</f:facet>
+
+					</p:column>
+
+				</p:dataTable>
+				
+				
+				
+			
+			</h:form>
+</p:panel>
+</ui:define>
+</ui:composition>
+</html>

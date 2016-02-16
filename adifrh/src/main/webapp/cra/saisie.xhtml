@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../template/common/commonLayout.xhtml">
+    	
+<ui:define name="content">
+	<h:form id="form">
+	
+	
+	<h:outputScript>
+function alphaToNum(i){
+    var field = document.getElementById(i);
+var val="";
+ if (field.value==1 ){
+val=1;
+ } 
+ if (field.value==5 || field.value==0.5){
+val=0.5;
+ }
+  document.getElementById(i).value=val;
+  
+}
+
+function cpt(i,a){
+var cptGlobal = parseFloat(document.getElementById("form:cptGlobal").value);
+    var field = document.getElementById(i);
+	var cpt = parseFloat(document.getElementById(a).value);
+	cptGlobal=cptGlobal-cpt;
+	if(document.getElementById(i).defaultValue!=""){
+	
+	cpt=cpt-document.getElementById(i).defaultValue;
+	}
+ if (field.value==1 ){
+cpt=cpt+1;
+
+ } 
+ if (field.value==5 ){
+cpt=cpt+0.5;
+
+ }
+  document.getElementById(a).value=cpt;
+  document.getElementById("form:cptGlobal").value=cptGlobal+cpt;
+}
+
+function saveOld(i){
+
+ document.getElementById(i).defaultValue=document.getElementById(i).value;
+
+ }
+</h:outputScript>
+	
+	
+<p:panel>
+ <f:facet name="header" >
+<p:commandButton id="boutonPrecedent"  actionListener="#{craBean.moisPrecedent()}"
+
+			icon="ui-icon ui-icon-circle-triangle-w" update="form"></p:commandButton>
+			<p:commandButton id="boutonSuivant"  
+			actionListener="#{craBean.moisSuivant()}"
+			icon="ui-icon ui-icon-circle-triangle-e" update="form"></p:commandButton>
+			Compte rendu d'activité du mois de <h:outputText value="#{craBean.dateCourante}">
+			<f:convertDateTime pattern="MMMM  yyyy" type="date" />
+		</h:outputText> 
+		
+</f:facet>
+<h:panelGroup rendered="#{!craBean.afficherCra}">
+Aucun compte rendu d'activité à saisir.
+</h:panelGroup>
+
+		<h:panelGroup rendered="#{craBean.afficherCra}">
+		<table id="table"
+			style="width: 100%; border-collapse: collapse; background-color: white;">
+			<tr>
+				<td
+					style="width: 50px; border-color: #DDDDDD; height: 35px; text-transform: capitalize; text-align: center; font-size: 1.2em;"><h:outputText
+						value="#{craBean.dateCourante}">
+						<f:convertDateTime pattern="MMM yyyy" type="date" />
+					</h:outputText></td>
+				<td
+					style="font-size: 0.8em; border-color: #DDDDDD; text-align: center;">Total</td>
+				<ui:repeat var="f" value="#{craBean.jours}">
+					<td style="width: 30px; text-align: center; border-color: #DDDDDD;">
+						<h:outputText value="#{f.date}" style="font-size: 0.8em;">
+							<f:convertDateTime pattern="E dd" type="date" />
+						</h:outputText>
+					</td>
+
+				</ui:repeat>
+			</tr>
+
+			<tr>
+			
+			
+				<td  style="border-color: #DDDDDD; height: 35px;"> <p:outputLabel id="fade" value="Activité"  >   </p:outputLabel>  
+				<p:tooltip id="toolTipFade" for="fade" value="Fade effect is used by default" /> </td>
+				<td style="font-size: 0.8em; border-color: #DDDDDD;"><h:inputText
+						disabled="true" style="  width:26px;" id="cptA"
+						value="#{craBean.nbJourSaisie}"></h:inputText></td>
+				<ui:repeat var="f" value="#{craBean.jours}">
+					<td style="text-align: center; border-color: #DDDDDD;#{ f.categorie=='WKD'?'background-color: grey ':' #F9FAFB'}"><h:inputText
+							rendered="#{f.categorie=='CONGES'?false:true}" id="act"
+							onfocus="saveOld(id)" onblur="alphaToNum(id)"
+							onchange="cpt(id,'form:cptA')" maxlength="1" style=" width:18px;"
+							value="#{f.value}"></h:inputText></td>
+
+				</ui:repeat>
+			</tr>
+			<tr>
+				<td style="border-color: #DDDDDD; height: 35px;"> Activité <p:commandButton style="width:14px; height: 14px;" id="es"  icon="ui-icon-info" /> 
+				<p:tooltip   for="es" value="Travail effectif réalisé entre 22h et 6h." />exceptionnelle </td>
+				<td style="font-size: 0.8em; border-color: #DDDDDD;"><h:inputText
+						disabled="true" style="  width:26px;" id="cptAE"
+						value="#{craBean.nbJourException}"></h:inputText></td>
+				<ui:repeat var="f" value="#{craBean.joursException}">
+					<td
+						style="text-align: center; border-color: #DDDDDD; #{ f.categorie=='WKD'?'background-color: grey ':' #F9FAFB'}">
+						<h:inputText id="actExp" maxlength="1" onfocus="saveOld(id)"
+							rendered="#{f.categorie=='CONGES'?false:true}" 
+							onblur="alphaToNum(id)" onchange="cpt(id,'form:cptAE')"
+							style="  width:18px;" value="#{f.value}"></h:inputText>
+					</td>
+
+				</ui:repeat>
+			</tr>
+			<tr>
+				<td style="border-color: #DDDDDD; height: 35px;">Congés</td>
+				<td style="font-size: 0.8em; border-color: #DDDDDD;"><h:inputText
+						disabled="true" style="  width:26px;" id="cptGE"
+						value="#{craBean.nbCongesException}"></h:inputText></td>
+				<ui:repeat var="f" value="#{craBean.congesException}">
+					<td
+						style="text-align: center; border-color: #DDDDDD; #{ f.categorie=='WKD'?'background-color: #E3F1FA ':' background-color:#E3F1FA'}">
+						<h:inputText id="conExp" maxlength="1" onfocus="saveOld(id)"
+							onblur="alphaToNum(id)" onchange="cpt(id,'form:cptGE')" disabled="#{f.categorie=='WKD' or f.categorie=='CONGES'? true:false}"
+						
+							style=" width:18px;" ></h:inputText>
+					</td>
+
+				</ui:repeat>
+			</tr>
+		</table>
+		<h:panelGrid columns="2">
+			<h:outputText value="Nombre de jour saisie : "></h:outputText>
+			<h:inputText disabled="true" id="cptGlobal"
+				value="#{craBean.nbJourSaisie}"></h:inputText>
+			<h:outputText value="Nombre de jour ouvré du mois : "></h:outputText>
+			<h:outputText value="#{craBean.nbJour}"></h:outputText>
+
+		</h:panelGrid>
+		<h:panelGrid columns="5">
+			<p:commandButton id="remplissageAuto"  value="Remplissage auto"
+				icon="ui-icon ui-icon-arrowrefresh-1-w"
+				actionListener="#{craBean.remplissageAuto()}" update="form"></p:commandButton>
+			<p:commandButton id="Initialiser" value="Initialisation"
+				icon="ui-icon ui-icon-arrowrefresh-1-w"
+				actionListener="#{craBean.setJoursReset()}" update="form"></p:commandButton>
+			<p:commandButton style="width:100px;"
+									rendered="#{authBean.afficher(craBean.cra,'')}"
+									partialSubmit="true" process="@this"
+									update="@form" action="#{craBean.etatSuivant(craBean.cra)}"
+									value="#{craBean.cra.etat.suivant.libelle}">
+								</p:commandButton>
+			<p:commandButton value="Imprimer" icon="ui-icon ui-icon-print"
+				onclick="window.print(); return false;"></p:commandButton>
+			
+		</h:panelGrid>
+
+
+</h:panelGroup>
+	</p:panel >
+		</h:form>
+		<h:form enctype="multipart/form-data">
+		<p:panel header="Ajouter le cra signé par le client" rendered="#{craBean.afficherCra}" >
+			<p:fileUpload fileUploadListener="#{craBean.upload}"
+				uploadLabel="Transmettre" cancelLabel="Annuler" process="@this" 
+				label="Choisir un fichier" mode="advanced" dragDropSupport="true"
+				allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/" update="@form" />
+
+
+
+
+		</p:panel>
+	</h:form>
+
+</ui:define>
+</ui:composition>
+</h:body>
+
+</html>

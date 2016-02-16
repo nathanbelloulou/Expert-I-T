@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../template/common/commonLayout.xhtml">
+		<ui:define name="content">
+		<p:panel header="Option">
+		<h:form id="jourOff">
+		<p:panel header="Message d'accueil">
+		
+		<p:outputLabel>fichier #{initBean.fileMessageAccueil}</p:outputLabel>
+		
+<p:editor value="#{initBean.messageAccueil}" />
+					<p:commandButton id="save" value="Enregistrer"
+						
+						actionListener="#{initBean.saveMessageAccueil()}" partialSubmit="true" process="@parent" update="@parent"
+						icon="ui-icon-disk" iconPos="right" />
+		
+		
+	
+			</p:panel>
+			
+			<p:panel header="Message de compte rendu d'activité">
+			
+			
+
+		<p:outputLabel>fichier #{initBean.fileMessageCra}</p:outputLabel>
+	
+	<p:editor  value="#{initBean.messageCra}" />
+		
+	
+			</p:panel>
+			
+			<p:panel header="Dossier de GED">
+			<p:outputLabel>fichier #{initBean.dirDocument}</p:outputLabel>
+			</p:panel>
+			</h:form>
+</p:panel>
+</ui:define>
+</ui:composition>
+</html>

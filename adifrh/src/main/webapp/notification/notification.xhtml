@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="../template/common/commonLayout.xhtml">
+		<ui:define name="content">
+		<p:panel header="Notification" >
+		<p:dataTable  var="f" value="#{requestBean.notifications}"
+							paginator="true" rows="5" paginatorPosition="bottom"
+							>
+							<p:column headerText="Date">
+								<f:facet name="header">
+							
+						</f:facet>
+
+							#{f.date}
+
+							</p:column>
+							<p:column headerText="Utilisateurs">
+								<f:facet name="header">
+							
+						</f:facet>
+
+
+
+     
+        #{f.utilisateur.nom} #{f.utilisateur.prenom}
+
+						
+
+
+							</p:column>
+							<p:column headerText="Message">
+								<f:facet name="header">
+							
+						</f:facet>
+
+							#{f.message.message}
+
+							</p:column>
+							<p:column >
+								<f:facet name="header"><p:commandButton  actionListener="#{utilisateurBean.reset}"
+						icon="ui-icon ui-icon-plusthick" id="showDialogButton" 
+						onclick="PF('dlgnot').show()" />
+							
+						</f:facet>
+
+<p:commandButton value="Relancer"
+						
+						 />
+<p:commandButton value="Détail"
+						
+						 />
+				
+
+							</p:column>
+
+						</p:dataTable>
+
+
+<h:form id="tab">
+			<p:dialog header="Notification"  widgetVar="dlgnot"  > 
+				
+				<h:panelGrid  columns="2" >
+								 <h:outputLabel value="Utilisateur: " />
+        <p:selectCheckboxMenu id="menu" value="#{notificationBean.notification.utilisateur}"  label="Utilisateur"
+                              filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+            <f:selectItems value="#{utilisateurBean.utilisateurList}" var="uti" itemLabel="#{uti.nom} #{uti.prenom}" itemValue="#{uti}" />
+        </p:selectCheckboxMenu>
+         <h:outputLabel value="Message: " />
+
+        <p:commandButton id="addUser" value="#{notificationBean.notification.id eq 0 ? 'Ajouter': 'Modifier'}" 
+						actionListener="#{notificationBean.addNotification}" update="@all" />
+        </h:panelGrid>
+        
+				</p:dialog>
+</h:form>
+			
+</p:panel>
+
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

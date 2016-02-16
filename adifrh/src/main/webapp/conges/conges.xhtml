@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="../template/common/commonLayout.xhtml">
+		<ui:define name="content">
+			<p:panel header="Congés">
+				<h:form id="conges" >
+
+
+					<p:dataTable id="data" var="conges" paginatorAlwaysVisible="false" 
+						paginatorPosition="bottom" value="#{congesBean.congesList}"
+						paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+						<p:column width="150"
+							rendered="#{authBean.utilisateur.abilitationAdministrateur}">
+							<f:facet name="header">
+							Utilisateur
+								<h:selectOneMenu value="#{congesBean.filtreUtilisateurId}"  >
+									<f:selectItem itemLabel="" />
+									<f:selectItems value="#{utilisateurBean.utilisateurList}"
+										var="utilisateur" itemValue="#{utilisateur.id}"
+										itemLabel="#{utilisateur.prenom}  #{utilisateur.nom}"  />
+									<f:ajax  event="change" listener="#{congesBean.filtre}" 
+										execute="data" render="data" />
+								</h:selectOneMenu>
+							</f:facet>
+							<h:outputText value="#{conges.utilisateur.nom}">
+
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Date de début" />
+							</f:facet>
+							<h:outputText value="#{conges.debut}">
+								<f:convertDateTime pattern="d/M/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Date de fin" />
+							</f:facet>
+							<h:outputText value="#{conges.fin}">
+								<f:convertDateTime pattern="d/M/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="nb Jours" />
+							</f:facet>
+							<h:outputText
+								value="#{conges.nbJourCP+conges.nbJourHS+conges.nbJourRTT}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Congés payé" />
+							</f:facet>
+							<h:outputText value="#{conges.nbJourCP}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="RTT" />
+							</f:facet>
+							<h:outputText value="#{conges.nbJourRTT}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Sans solde" />
+							</f:facet>
+							<h:outputText value="#{conges.nbJourHS}" />
+						</p:column>
+						<p:column width="120">
+							<f:facet name="header">
+							Etat
+								<h:selectOneMenu value="#{congesBean.filtreEtat}">
+									<f:selectItem itemLabel="Etat" />
+									<f:selectItems value="#{dataEnum.etats}" var="st"
+										itemLabel="#{st}"  />
+									<f:ajax event="change" listener="#{congesBean.filtre}"
+										execute="data" render="data"  />
+								</h:selectOneMenu>
+							</f:facet>
+							<h:outputText value="#{conges.etat}" />
+						</p:column>
+
+
+
+						<p:column style="width:100px;">
+							<f:facet name="header">
+								<p:commandButton
+									rendered="#{not authBean.utilisateur.abilitationAdministrateur}"
+									partialSubmit="true" process="@this" update=":conges:add"
+									value="Faire une demande" actionListener="#{congesBean.reset}"
+									icon="ui-icon-plusthick" id="showDialogButton"
+									oncomplete="PF('dlgConges').show()" />
+							</f:facet>
+							<h:panelGroup>
+
+
+								<p:commandButton style="width:100px;"
+									rendered="#{authBean.afficher(conges,'')}" update="@form"
+									actionListener="#{congesBean.etatSuivant(conges)}"
+									partialSubmit="true" process="@this"
+									value="#{conges.etat.suivant.libelle}">
+								</p:commandButton>
+
+
+								<p:commandButton style="width:100px;" update="data"
+									value="Supprimer"
+									partialSubmit="true" process="@this"
+									rendered="#{authBean.afficher(conges,'supprimer')}"
+									actionListener="#{congesBean.deleteConges(conges)}"
+									icon="ui-icon-circle-close">
+								</p:commandButton>
+							</h:panelGroup>
+						</p:column>
+
+					</p:dataTable>
+					<p:dialog header="Demande de congés" id="dlgConges"
+						widgetVar="dlgConges" focus="debut" width="500" modal="true">
+
+
+
+
+						<h:panelGrid id="add" columns="1">
+
+							<p:messages id="messageConges"></p:messages>
+							<h:panelGrid columns="3">
+
+								<h:outputLabel for="debut" value="Début : " />
+								<p:calendar id="debut" value="#{congesBean.conges.debut}"
+									disabledWeekends="true" disabled="#{congesBean.repartir}">
+									<p:ajax event="dateSelect"
+										listener="#{congesBean.nbjourCongesEffectif()}" update="add" />
+								</p:calendar>
+								<p:selectBooleanCheckbox value="#{congesBean.dbtDemi}"
+									itemLabel=" à partir de midi" disabled="#{congesBean.repartir}">
+									<p:ajax event="change"
+										listener="#{congesBean.nbjourCongesEffectif()}" update="add" />
+								</p:selectBooleanCheckbox>
+								<h:outputLabel for="fin" value="Fin : " />
+								<p:calendar id="fin" value="#{congesBean.conges.fin}"
+									disabledWeekends="true" mindate="#{congesBean.conges.debut}"
+									disabled="#{congesBean.repartir or congesBean.conges.debut eq null}">
+									<p:ajax event="dateSelect"
+										listener="#{congesBean.nbjourCongesEffectif()}" update="add" />
+								</p:calendar>
+								<p:selectBooleanCheckbox value="#{congesBean.finDemi}"
+									itemLabel="jusqu'à midi." disabled="#{congesBean.repartir}">
+									<p:ajax event="change"
+										listener="#{congesBean.nbjourCongesEffectif()}" update="add" />
+								</p:selectBooleanCheckbox>
+
+								<br></br>
+
+
+
+
+							</h:panelGrid>
+
+							<h:outputText id="compteur"
+								value="Nombre de jours à répartir: #{congesBean.nbJourEffectif}"></h:outputText>
+							<p:commandButton id="continuer" value="Continuer"
+								actionListener="#{congesBean.setRepartir(true)}"
+								partialSubmit="true" process="@this" update="add"
+								rendered="#{congesBean.nbJourEffectif>0 and  !congesBean.repartir}" />
+							<h:panelGrid columns="2" rendered="#{congesBean.repartir}"  >
+
+								<h:outputLabel value="Congés payé : "></h:outputLabel>
+								<p:spinner id="CP" value="#{congesBean.conges.nbJourCP}"
+									stepFactor="0.5" min="0">
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										update=":conges:addConges" />
+								</p:spinner>
+
+								<h:outputLabel value="RTT  : "></h:outputLabel>
+								<p:spinner id="RTT" value="#{congesBean.conges.nbJourRTT}"
+									stepFactor="0.5" min="0">
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										update=":conges:addConges" />
+								</p:spinner>
+
+								<h:outputLabel value="Sans solde : "></h:outputLabel>
+								<p:spinner id="HS" value="#{congesBean.conges.nbJourHS}"
+									stepFactor="0.5" min="0">
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										update=":conges:addConges" />
+								</p:spinner>
+
+
+							
+									
+							
+	<p:commandButton id="addConges" disabled="#{!congesBean.AfficherEnregistrer() and congesBean.repartir}"   value="Enregistrer"
+									actionListener="#{congesBean.addConges}"
+									
+									
+									update=":conges" />
+										<p:commandButton id="init"   value="Initialiser"
+									actionListener="#{congesBean.reset()}"
+									
+									update=":conges:add" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+					</p:dialog>
+				</h:form>
+
+
+			</p:panel>
+
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

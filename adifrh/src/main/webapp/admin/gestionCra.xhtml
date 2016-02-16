@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="../template/common/commonLayout.xhtml">
+		<ui:define name="content">
+		
+		<p:dialog id="ouvrir" widgetVar="ouvrir" modal="true">
+		<h:form>
+			<h:panelGrid id="add" columns="5">
+					<p:commandButton value="Ouvrir le Compte rendu d'activité"
+								actionListener="#{craBean.ouvrirCra()}" update="@all" />
+ du mois de 	 <h:outputText value="#{craBean.dateCourante}">
+			<f:convertDateTime pattern="MMMM  yyyy" type="date" />
+		</h:outputText> 
+<p:commandButton id="boutonPrecedent"  actionListener="#{craBean.moisPrecedent()}"
+
+			icon="ui-icon ui-icon-circle-triangle-w" update="@form"></p:commandButton>
+			<p:commandButton id="boutonSuivant"  
+			actionListener="#{craBean.moisSuivant()}"
+			icon="ui-icon ui-icon-circle-triangle-e" update="@form" ></p:commandButton>
+		
+					</h:panelGrid>
+		
+		</h:form>
+		</p:dialog>	
+		
+		
+		
+
+		
+						<p:panel header="Gestion Cra">
+						<h:form>
+						<p:commandButton value="Ouvrir la saisie au Cra" oncomplete="PF('ouvrir').show();" ></p:commandButton>
+						</h:form>
+				<h:form id="tab">
+				
+				
+		
+			
+					<p:dataTable id="cras" var="cra" paginatorPosition="bottom"
+						value="#{craBean.cras}" draggableColumns="true" paginator="true"
+						rows="10"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Date du cra" />
+							</f:facet>
+							<h:outputText value="#{cra.mois}">
+			<f:convertDateTime pattern="MMMM  yyyy" type="both" />
+		</h:outputText> 
+						
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Date création" />
+							</f:facet>
+							
+								<h:outputText value="#{cra.dateCreation}">
+			<f:convertDateTime pattern="dd  MMMM  yyyy" type="both" />
+		</h:outputText> 
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Date modification" />
+							</f:facet>
+						
+							<h:outputText value="#{cra.dateModification}">
+			<f:convertDateTime pattern="dd MMMM  yyyy" type="both" />
+		</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Utilisateur" />
+							</f:facet>
+							<h:outputText value="#{cra.utilisateur.nom}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Etat" />
+							</f:facet>
+							<h:outputText value="#{cra.etat}" />
+						</p:column>
+						
+							<p:column style="width:100px;">
+							<f:facet name="header">
+								Action
+							</f:facet>
+							<h:panelGroup>
+
+
+								<p:commandButton style="width:100px;"
+									rendered="#{authBean.afficher(cra,'')}"
+									partialSubmit="true" process="@this"
+									update="@form" action="#{craBean.update(authBean.etatSuivant(cra))}"
+									value="#{cra.etat.suivant.libelle}">
+								</p:commandButton>
+
+							
+								<p:commandButton style="width:100px;" update="data"
+									value="Supprimer"
+									partialSubmit="true" process="@this"
+									rendered="#{authBean.afficher(cra,'supprimer')}"
+									actionListener="#{craBean.supprimer(cra)}"
+									icon="ui-icon-circle-close">
+								</p:commandButton>
+							</h:panelGroup>
+						</p:column>
+						
+
+					</p:dataTable>
+			</h:form>
+				</p:panel>
+
+
+
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>
